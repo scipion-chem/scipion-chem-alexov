@@ -1,5 +1,5 @@
-"""A setuptools based setup module.
-
+"""
+A setuptools based setup module.
 See:
 https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-from alexov import __version__
+from alexov import __version__, _logo
 
 here = path.abspath(path.dirname(__file__))
 
@@ -44,9 +44,10 @@ setup(
     project_urls={  # Optional
         'Bug Reports': 'https://github.com/scipion-chem/scipion-chem-alexov/issues',
         'Source': 'https://github.com/scipion-chem/scipion-chem-alexov/',
+        'Pull Requests': 'https://github.com/scipion-chem/scipion-chem-alexov/pulls'
     },
     entry_points={'pyworkflow.plugin': 'alexov = alexov'},
     package_data={  # Optional
-       'alexov': ['icon.png', 'protocols.conf'],
+       'alexov': [_logo, 'protocols.conf'],
     }
 )

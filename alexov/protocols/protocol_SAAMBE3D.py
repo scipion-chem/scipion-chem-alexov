@@ -37,9 +37,11 @@ import pyworkflow.protocol.params as params
 from pyworkflow.utils import Message
 from pwem.protocols import EMProtocol
 from pwem.objects.data import AtomStruct
-from pwchem.utils import cleanPDB
+import pwem.convert as emconv
+from pwchem.utils.utils import cleanPDB
 
 from alexov import Plugin
+from alexov.constants import AA_THREE_TO_ONE
 
 class ProtocolSAAMBE3D(EMProtocol):
     """
@@ -60,7 +62,7 @@ class ProtocolSAAMBE3D(EMProtocol):
                       default='', label='List of mutations:',
                       help='The syntax of a mutation is "[Chain] [Position] [aaFrom] [aaTo]", for instance, '
                             'the mutation A 182 C Y, mutates position 182 of chain A that is a (C)ystein to a '
-                            't(Y)rosine. For the one-letter aminoacid code see https://en.wikipedia.org/wiki/Amino_acid')
+                            't(Y)rosine. For the one-letter aminoacid code see https://en.wikipedia.org/wiki/Amino_acid.')
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
@@ -71,19 +73,87 @@ class ProtocolSAAMBE3D(EMProtocol):
         cleanPDB(self.inputAtomStruct.get().getFileName(),fnPDB)
         fnMut = self._getExtraPath("mutations.txt")
         with open(fnMut,"w") as fh:
-            fh.write(self.toMutateList.get()+"\n")
+            fh.write(self.toMutateList.get().upper()+"\n")
         args="-i %s -d 1 -o %s -f %s"%(fnPDB, self._getExtraPath("ddg.txt"), fnMut)
         Plugin.runSAAMBE(self, args=args)
+
+        os.remove(fnPDB)
 
     # --------------------------- INFO functions -----------------------------------
     def _validate(self):
         errors = []
+    
+        structureHandler = emconv.AtomicStructHandler()
+        structureHandler.read(self.inputAtomStruct.get().getFileName())
+        structureHandler.getStructure()
+        modelsLength, modelsFirstResidue = structureHandler.getModelsChains()
+        
+        validChains = set()
+        chainResidues = {}
+
+        for modelID, chains in modelsFirstResidue.items():
+            for chainID, residues in chains.items():
+                filtered_residues = [res for res in residues if res[1] != 'HOH']
+                validChains.add(chainID)
+                if chainID not in chainResidues:
+                    chainResidues[chainID] = filtered_residues
+
+        if not self.toMutateList.get().strip():
+            errors.append('You have not added any mutation to the list.')
+        else:
+            for i, line in enumerate(self.toMutateList.get().strip().split('\n')):
+                parts = line.upper().split()
+
+                if len(parts) != 4:
+                    errors.append(f'The mutation "{line}" does not have the 4 necessary parameters. ' 
+                                  'Mutation format must be "[Chain] [Position] [aaFrom] [aaTo]".')
+                else:
+                    chain, position, aaFrom, aaTo = parts
+
+                    if chain not in validChains:
+                        errors.append(f'The chain "{chain}" of the mutation "{line}" is not present in the PDB file. '
+                                      f'The PDB file contains the following chains: {", ".join(validChains)}.')
+                    
+                    elif not position.isdigit():
+                        errors.append(f'The position of the mutation "{line}" must be an integer.')
+                    
+                    elif aaFrom not in AA_THREE_TO_ONE.values():
+                        errors.append(f'The wild-type aminoacid of the mutation "{line}" does not ' 
+                                      'exist or is not written with its one-letter code.')
+                    
+                    elif aaTo not in AA_THREE_TO_ONE.values():
+                        errors.append(f'The mutant aminoacid of the mutation "{line}" does not ' 
+                                       'exist or is not written with its one-letter code.')
+
+                    else:   
+                        position = int(position)             
+                        residues_dict = {res[0]: res[1] for res in chainResidues[chain]}
+                        if position not in residues_dict.keys():
+                            first_residue = list(residues_dict.keys())[0]
+                            last_residue = list(residues_dict.keys())[-1]
+                            errors.append(f'Position "{position}" in chain "{chain}" for mutation "{line}" is out of range. '
+                                          f'The chain "{chain}" has positions from {first_residue} to {last_residue}.')
+                        
+                        elif AA_THREE_TO_ONE[residues_dict[position]] != aaFrom:
+                            errors.append(f'The wild-type aminoacid "{aaFrom}" at position "{position}" in chain "{chain}" '
+                                          f'for mutation "{line}" does not match the PDB file. The aminoacid at that position '
+                                          f'is {residues_dict[position]} ({AA_THREE_TO_ONE[residues_dict[position]]}).')
+       
         return errors
 
     def _summary(self):
         summary = []
+        ddgFile = self._getExtraPath('ddg.txt')
+        if os.path.exists(ddgFile):
+            with open(ddgFile) as f:
+              summary.append(f.read())    
         return summary
 
     def _methods(self):
-        methods = ['We calculated the ddG for the mutations using the SAAMBE method described in [Pahari2020]']
+        methods = []
+        methods.append("Prediction of the binding free energy change (ΔΔG) for protein-protein interactions "
+                       "due to a point mutation in an aminoacid using the SAAMBE-3D method.")
         return methods
+    
+    def _citations(self):
+        return ['Pahari2020']

@@ -24,7 +24,26 @@
 # *
 # **************************************************************************
 
-V1 = "1.0"
+AA_THREE_TO_ONE = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F', 
+                   'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L', 
+                   'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 
+                   'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y'}
 
+# ------------------------------------ INSTALLATION VARIABLES ------------------------------------
+PLUGIN_NAME = 'ALEXOV'
+ALEXOV_GIT = 'https://github.com/delphi001/'
+ALEXOV_HOME = 'ALEXOV_HOME'
+SAAMBE_HOME = 'SAAMBE_HOME'
 SAAMBE_BINARY = "SAAMBE_BINARY"
-SAAMBE_HOME = "SAAMBE_HOME"
+
+# Supported versions
+V1_0 = '1.0'
+
+# Plugin version
+ALEXOV_VERSION = '0.1'
+
+# Protocol versions 
+SAAMBE_DEFAULT_VERSION = V1_0
+
+# Protocol repo versions
+SAAMBE_REPO_DEFAULT_VERSION = V1_0
