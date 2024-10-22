@@ -29,14 +29,17 @@
 """
 Wrapper around the SAAMBE3D method from http://compbio.clemson.edu/saambe_webserver/
 """
+
 import numpy as np
 import os, re
 
 from pyworkflow.constants import BETA
+from pyworkflow.object import Object, Float, String
 import pyworkflow.protocol.params as params
 from pyworkflow.utils import Message
+
 from pwem.protocols import EMProtocol
-from pwem.objects.data import AtomStruct
+from pwem.objects.data import AtomStruct, SetOfStats
 from pwchem.objects import SetOfStructROIs
 
 import pwem.convert as emconv
@@ -66,6 +69,10 @@ class ProtocolSAAMBE3D(EMProtocol):
                        label='Source of ROIs: ', choices=['Manual', 'SetOfStructROIs'],
                        help='Select the source of the regions of interest.')
         
+        form.addParam('mutChain', params.StringParam, allowsNull=False, 
+                      label='Chain to mutate', condition='ROIOrigin==0 and multiPosition',
+                      help='Specify the protein chain to mutate.')
+        
         form.addParam('RangPositions', params.StringParam, allowsNull=False,
                       label='Range of positions: ', condition='ROIOrigin==0 and multiPosition',
                       help='Specify the first and last index of each position range, separating '
@@ -87,8 +94,7 @@ class ProtocolSAAMBE3D(EMProtocol):
                       label="Residue to introduce", condition='multiPosition and not mutSaturation',
                       help='Define the substitute residue which will be introduced with its '
                            'one-letter code.\nFor the one-letter aminoacid code, see '
-                           'https://foldxsuite.crg.eu/allowed-residues.')
-        
+                           'https://www.ebi.ac.uk/pdbe/docs/roadshow_tutorial/msdtarget/AAcodes.html.')
 
         form.addParam('addMutation', params.LabelParam,
                       label='Add defined mutations', condition='multiPosition',
@@ -123,6 +129,7 @@ class ProtocolSAAMBE3D(EMProtocol):
         self._insertFunctionStep(self.computeDDG)
         self._insertFunctionStep(self.processResults)
         self._insertFunctionStep(self.calculateZScore)
+        self._insertFunctionStep(self.createOutputStep)
 
     def computeDDG(self):
         fnPDB = self._getExtraPath("atomicStructure.pdb")
@@ -166,7 +173,6 @@ class ProtocolSAAMBE3D(EMProtocol):
             content = "\n".join(content)
             fddg.write(content)
 
-
     def calculateZScore(self):
         saambe_process = self._getExtraPath('SAAMBE3D_SM.tsv')
         ddg_user = self._getExtraPath('SAAMBE3D_zscore.tsv')
@@ -206,7 +212,35 @@ class ProtocolSAAMBE3D(EMProtocol):
 
         with open(ddg_user, "w+") as fuser:
             fuser.write(user_zscores_str)
+
+    def createOutputStep(self):
+        saambe_process = self._getExtraPath('SAAMBE3D_SM.tsv')  
+        ddg_user = self._getExtraPath('SAAMBE3D_zscore.tsv')
+      
+        outputSet = SetOfStats.create(self.getPath())
+        
+        mutations = []
+        with open(ddg_user, "r") as f:
+            content = f.readlines()
+            for line in content[1:]:  
+                mut = line.split('\t')
+                mutations.append(mut[0])
+
+        with open(saambe_process, "r") as f:
+            results = f.readlines()
+        
+        for line in results[1:]:                
+            fields = line.strip().split("\t")
             
+            if fields[0] in mutations:
+                newItem = Object()
+                setattr(newItem, 'Mut', String(fields[0]))  
+                setattr(newItem, 'ddg', Float(fields[1]))   
+                setattr(newItem, 'zscore', Float(fields[2])) 
+                outputSet.append(newItem)
+
+        self._defineOutputs(outputStats=outputSet)
+        self._defineTransformRelation(self.inputAtomStruct, outputSet)              
 
     # --------------------------- INFO functions -----------------------------------
     def _validate(self):
