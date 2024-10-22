@@ -27,16 +27,17 @@
 
 """
 @article{Pahari2020,
-title = "SAAMBE-3D: Predicting Effect of Mutations on Protein-Protein Interactions",
-journal = "Int J Mol Sci",
-. 2020 Apr 7;21(7):2563. doi: 10.3390/ijms21072563.
-volume = "21",
-number = "7",
-pages = "2563",
-year = "2020",
-doi = "https://dx.doi.org/10.3390/ijms21072563",
-url = "https://www.mdpi.com/1422-0067/21/7/2563",
-author = "Pahari, S. and Li, G. and Murthy, A. K. and Liang, S. and Fragoza, R. and Yu, H. and Alexov, E.",
-keywords = "Calculation of the ddG for mutations in protein-protein interfaces",
+AUTHOR = {Pahari, Swagata and Li, Gen and Murthy, Adithya Krishna and Liang, Siqi and Fragoza, Robert and Yu, Haiyuan and Alexov, Emil},
+TITLE = {SAAMBE-3D: Predicting Effect of Mutations on Protein–Protein Interactions},
+JOURNAL = {International Journal of Molecular Sciences},
+VOLUME = {21},
+YEAR = {2020},
+NUMBER = {7},
+ARTICLE-NUMBER = {2563},
+URL = {https://www.mdpi.com/1422-0067/21/7/2563},
+PubMedID = {32272725},
+ISSN = {1422-0067},
+ABSTRACT = {Maintaining wild type protein–protein interactions is essential for the normal function of cell and any mutation that alter their characteristics can cause disease. Therefore, the ability to correctly and quickly predict the effect of amino acid mutations is crucial for understanding disease effects and to be able to carry out genome-wide studies. Here, we report a new development of the SAAMBE method, SAAMBE-3D, which is a machine learning-based approach, resulting in accurate predictions and is extremely fast. It achieves the Pearson correlation coefficient ranging from 0.78 to 0.82 depending on the training protocol in benchmarking five-fold validation test against the SKEMPI v2.0 database and outperforms currently existing algorithms on various blind-tests. Furthermore, optimized and tested via five-fold cross-validation on the Cornell University dataset, the SAAMBE-3D achieves AUC of 1.0 and 0.96 on a homo and hereto-dimer test datasets. Another important feature of SAAMBE-3D is that it is very fast, it takes less than a fraction of a second to complete a prediction. SAAMBE-3D is available as a web server and as well as a stand-alone code, the last one being another important feature allowing other researchers to directly download the code and run it on their local computer. Combined all together, SAAMBE-3D is an accurate and fast software applicable for genome-wide studies to assess the effect of amino acid mutations on protein–protein interactions. The webserver and the stand-alone codes (SAAMBE-3D for predicting the change of binding free energy and SAAMBE-3D-DN for predicting if the mutation is disruptive or non-disruptive) are available.},
+DOI = {10.3390/ijms21072563}
 }
 """
