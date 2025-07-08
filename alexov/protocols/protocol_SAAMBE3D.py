@@ -52,6 +52,51 @@ class ProtocolSAAMBE3D(EMProtocol):
     """
     This protocol computes the change in free energy at the interface between two proteins
     when there is a mutation in one of the proteins.
+
+User IA Manual: SAAMBE3D Protocol
+
+The SAAMBE3D protocol is designed to predict the impact of point mutations on
+protein?protein binding free energy. It uses the SAAMBE-3D model, a
+structure-based machine learning approach that integrates atomic-level features
+to estimate changes in binding affinity (??G) upon mutation. This protocol is
+particularly useful for analyzing the energetic consequences of residue
+substitutions at protein?protein interfaces.
+
+To begin, the user must provide a protein complex structure in PDB format.
+The complex should contain both binding partners in a single coordinate file,
+and chain identifiers must be clearly defined to allow proper interface
+recognition. The structure should be complete and preprocessed, with all
+required atoms present and no overlapping residues.
+
+The user must also specify the list of mutations to be evaluated. These are
+entered in a standard mutation format, indicating the wild-type residue,
+its position, and the mutant residue, along with the chain identifier. Each
+mutation will be analyzed independently, and the protocol does not currently
+support multiple simultaneous substitutions.
+
+Internally, the protocol calculates structural descriptors for each mutation,
+including changes in van der Waals interactions, hydrogen bonding potential,
+solvent accessibility, and electrostatic terms. These features are then fed
+into the SAAMBE-3D model to predict the ??G value, which quantifies the
+stabilizing or destabilizing effect of the mutation on the binding interface.
+
+The user may optionally define environmental parameters such as pH or temperature,
+although default values are used in most cases to match the model?s training
+conditions. Results are compiled into a summary table that includes the predicted
+??G for each mutation, as well as a classification into stabilizing or
+destabilizing categories based on predefined thresholds.
+
+These outputs can be used to prioritize mutations for experimental validation,
+guide rational interface design, or study the molecular basis of binding
+affinity changes in disease or evolution. The protocol integrates smoothly with
+other Scipion-Chem modules, including those for mutagenesis, energy analysis,
+and structural modeling.
+
+In summary, the SAAMBE3D protocol provides a robust and interpretable method for
+predicting mutation-induced changes in protein?protein binding energy. It enables
+fast, reproducible in silico screening of variants, offering valuable insights
+into the energetic landscape of molecular interfaces.
+
     """
     _label = 'SAAMBE3D'
     _devStatus = BETA
