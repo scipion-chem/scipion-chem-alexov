@@ -259,33 +259,30 @@ into the energetic landscape of molecular interfaces.
             fuser.write(user_zscores_str)
 
     def createOutputStep(self):
-        saambe_process = self._getExtraPath('SAAMBE3D_SM.tsv')  
+        saambe_process = self._getExtraPath('SAAMBE3D_SM.tsv')
         ddg_user = self._getExtraPath('SAAMBE3D_zscore.tsv')
-      
         outputSet = SetOfStats.create(self.getPath())
-        
         mutations = []
         with open(ddg_user, "r") as f:
-            content = f.readlines()
-            for line in content[1:]:  
-                mut = line.split('\t')
-                mutations.append(mut[0])
-
+            for line in f.readlines()[1:]:
+                mut = line.split('\t')[0]
+                mutations.append(mut)
         with open(saambe_process, "r") as f:
             results = f.readlines()
-        
-        for line in results[1:]:                
+
+        for line in results[1:]:
             fields = line.strip().split("\t")
-            
-            if fields[0] in mutations:
-                newItem = Object()
-                newItem.setObjLabel(label=str(fields[0]))
-                setattr(newItem, 'ddg', Float(fields[1]))   
-                setattr(newItem, 'zscore', Float(fields[2])) 
-                outputSet.append(newItem)
+            mutName = fields[0]
+            if mutName in mutations:
+                item = Object()
+                item.setObjLabel(label=mutName)
+                item.mutation = String(mutName)
+                item.ddg = Float(fields[1])
+                item.zscore = Float(fields[2])
+                outputSet.append(item)
 
         self._defineOutputs(outputStats=outputSet)
-        self._defineTransformRelation(self.inputAtomStruct, outputSet)              
+        self._defineTransformRelation(self.inputAtomStruct, outputSet)
 
     # --------------------------- INFO functions -----------------------------------
     def _validate(self):
