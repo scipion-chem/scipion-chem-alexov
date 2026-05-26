@@ -28,8 +28,9 @@ AA_THREE_TO_ONE = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F',
                    'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L', 
                    'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 
                    'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y',
-                   'ALL': 'X', 'CYX': 'C', 'HID': 'H', 'HIE': 'H', 'HIP': 'H',
-                   'MSE': 'M', 'ASH': 'D', 'GLH': 'E', 'LYN': 'K',}
+                   'ALL': 'X', 'CYX': 'C', 'HID': 'H', 'HIE': 'H', 'MSE': 'M',
+                   'ASH': 'D', 'GLH': 'E', 'LYN': 'K', 'PTR': 'Y', 'HZP': 'P', 
+                   'HYP': 'h'}
 
 # ------------------------------------ INSTALLATION VARIABLES ------------------------------------
 PLUGIN_NAME = 'ALEXOV'
