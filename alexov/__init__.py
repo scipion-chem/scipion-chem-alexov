@@ -97,8 +97,6 @@ class Plugin(pwem.Plugin):
     @classmethod
     def runSAAMBE(cls, protocol, args):
         """Minimal and robust SAAMBE launcher."""
-
-        conda_sh = os.path.expanduser("~/miniconda3/etc/profile.d/conda.sh") # Change to the correct path if needed
         env_name = cls.getVar("SAAMBE_ENV")
         saambe_script = os.path.abspath(os.path.join(cls.getVar(SAAMBE_BINARY), "saambe-3d.py"))
         abs_args = " ".join(
@@ -106,13 +104,13 @@ class Plugin(pwem.Plugin):
             for a in args.split()
         )
 
-        cmd = (
-            f"source {conda_sh} && "
+        fullProgram = (
+            f"{cls.getCondaActivationCmd()} "
             f"conda activate {env_name} && "
-            f"python {saambe_script} {abs_args}"
+            f"python {saambe_script}"
         )
 
-        protocol.runJob("/bin/bash", f'-c "{cmd}"')
+        protocol.runJob(fullProgram, abs_args, env=cls.getEnviron())
 
     # ---------------------------------- Utils functions  -----------------------
     @classmethod
