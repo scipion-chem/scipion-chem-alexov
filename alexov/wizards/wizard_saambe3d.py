@@ -40,6 +40,11 @@ SelectChainWizardQT().addTarget(protocol=ProtocolSAAMBE3D,
                               inputs=['inputAtomStruct'],
                               outputs=['mutChain'])
 
+SelectChainWizardQT().addTarget(protocol=ProtocolSAAMBE3D,
+                              targets=['ROIChain'],
+                              inputs=['inputAtomStruct'],
+                              outputs=['ROIChain'])
+
 class AddMutationsSaambe(EmWizard):
     _targets = [(ProtocolSAAMBE3D, ['addMutation'])]
     
@@ -84,28 +89,36 @@ class AddMutationsSaambe(EmWizard):
     def getSructROI(self, form):
         protocol = form.protocol
         inputStructROI = protocol.inputStructROI.get()
-        return inputStructROI        
+        return inputStructROI
+
+    def getROIChain(self, form):
+        protocol = form.protocol
+        chainStr = protocol.ROIChain.get()
+        if chainStr and chainStr.strip():
+            return json.loads(chainStr)['chain']
+        return None
 
     def getMutations(self, form):
         aaTo = self.getaaTo(form)
         chainResidues = self.getchainResidues(form)
         ROIOrigin = self.getROIOrigen(form)
-        mutations = []     
+        mutations = []
 
         if ROIOrigin == 0:
             allRanPos = self.getPositions(form)
-            chain = self.getchain(form)       
+            chain = self.getchain(form)
             for ranPos in allRanPos:
                 ran = ranPos.split("-")
                 for chain, residues_dict in chainResidues.items():
                     if chain == self.getchain(form):
                         for pos in range(int(ran[0]), int(ran[1]) + 1):
-                            if pos in residues_dict:  
+                            if pos in residues_dict:
                                 aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
                                 mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
                                 mutations.append(mutation)
         else:
             structROI = self.getSructROI(form)
+            roiChain = self.getROIChain(form)
             allRanPos = []
             for item in structROI:
                 chain_res = item.getDecodedCResidues()
@@ -113,9 +126,11 @@ class AddMutationsSaambe(EmWizard):
                     res = roi.split("_")
                     chain = res[0]
                     pos = int(res[1])
+                    if roiChain and chain != roiChain:
+                        continue
                     for ch, residues_dict in chainResidues.items():
                         if ch == chain:
-                            if pos in residues_dict:  
+                            if pos in residues_dict:
                                 aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
                                 mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
                                 mutations.append(mutation)
