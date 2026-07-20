@@ -89,8 +89,8 @@ class Plugin(pwem.Plugin):
 
         # Installing protocol    
         installer.getCloneCommand('https://github.com/delphi001/SAAMBE-3D', binaryFolderName=packageName)\
-            .getCondaEnvCommand(pythonVersion='3.11.5', binaryPath=cls._saambeBinary, requirementsFile=False, 
-                                requirementList=['numpy==1.23.5', 'prody==2.4.1', 'xgboost==1.7.6']
+            .getCondaEnvCommand(pythonVersion='3.11.5', binaryPath=cls._saambeBinary, requirementsFile=False,
+                                requirementList=['"setuptools<81"', 'numpy==1.23.5', 'prody==2.4.1', 'xgboost==1.7.6']
                                 )\
             .addPackage(env, dependencies=['git', 'conda'])
     
