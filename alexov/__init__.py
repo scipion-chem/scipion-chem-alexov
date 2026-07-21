@@ -89,15 +89,14 @@ class Plugin(pwem.Plugin):
 
         # Installing protocol    
         installer.getCloneCommand('https://github.com/delphi001/SAAMBE-3D', binaryFolderName=packageName)\
-            .getCondaEnvCommand(pythonVersion='3.11.5', binaryPath=cls._saambeBinary, requirementsFile=False, 
-                                requirementList=['numpy', 'prody', 'xgboost'])\
+            .getCondaEnvCommand(pythonVersion='3.11.5', binaryPath=cls._saambeBinary, requirementsFile=False,
+                                requirementList=['"setuptools<81"', 'numpy==1.23.5', 'prody==2.4.1', 'xgboost==1.7.6']
+                                )\
             .addPackage(env, dependencies=['git', 'conda'])
     
     @classmethod
     def runSAAMBE(cls, protocol, args):
         """Minimal and robust SAAMBE launcher."""
-
-        conda_sh = os.path.expanduser("~/miniconda/etc/profile.d/conda.sh")
         env_name = cls.getVar("SAAMBE_ENV")
         saambe_script = os.path.abspath(os.path.join(cls.getVar(SAAMBE_BINARY), "saambe-3d.py"))
         abs_args = " ".join(
@@ -105,13 +104,13 @@ class Plugin(pwem.Plugin):
             for a in args.split()
         )
 
-        cmd = (
-            f"source {conda_sh} && "
+        fullProgram = (
+            f"{cls.getCondaActivationCmd()} "
             f"conda activate {env_name} && "
-            f"python {saambe_script} {abs_args}"
+            f"python {saambe_script}"
         )
 
-        protocol.runJob("/bin/bash", f'-c "{cmd}"')
+        protocol.runJob(fullProgram, abs_args, env=cls.getEnviron())
 
     # ---------------------------------- Utils functions  -----------------------
     @classmethod
