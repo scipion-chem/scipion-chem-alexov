@@ -45,8 +45,8 @@ from pwchem.objects import SetOfStructROIs
 import pwem.convert as emconv
 from pwchem.utils.utils import cleanPDB
 
-from alexov import Plugin
-from alexov.constants import AA_THREE_TO_ONE
+from saambe import Plugin
+from saambe.constants import AA_THREE_TO_ONE
 
 class ProtocolSAAMBE3D(EMProtocol):
     """

@@ -1,5 +1,5 @@
 =======================
-Scipion Alexov plugin
+Scipion SAAMBE plugin
 =======================
 
 This is a plugin for **scipion** wrapping some algorithms developed by `Professor Emil Alexov 
@@ -35,7 +35,7 @@ Scipion.
 
 .. code-block::
 
-    scipion3 installp -p scipion-chem-alexov
+    scipion3 installp -p scipion-chem-saambe
 
 
 - **Developer's version**
@@ -44,11 +44,11 @@ Scipion.
 
     .. code-block::
 
-        git clone https://github.com/scipion-chem/scipion-chem-alexov.git
+        git clone https://github.com/scipion-chem/scipion-chem-saambe.git
 
     2. **Install**:
 
     .. code-block::
 
-        scipion3 installp -p path_to_scipion-chem-alexov --devel
+        scipion3 installp -p path_to_scipion-chem-saambe --devel
 

@@ -33,9 +33,9 @@ AA_THREE_TO_ONE = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F',
                    'HYP': 'h'}
 
 # ------------------------------------ INSTALLATION VARIABLES ------------------------------------
-PLUGIN_NAME = 'ALEXOV'
-ALEXOV_GIT = 'https://github.com/delphi001/'
-ALEXOV_HOME = 'ALEXOV_HOME'
+PLUGIN_NAME = 'SAAMBE'
+SAAMBE_GIT = 'https://github.com/delphi001/'
+SAAMBE_PLUGIN_HOME = 'SAAMBE_PLUGIN_HOME'
 SAAMBE_HOME = 'SAAMBE_HOME'
 SAAMBE_BINARY = "SAAMBE_BINARY"
 
@@ -43,7 +43,7 @@ SAAMBE_BINARY = "SAAMBE_BINARY"
 V1_0 = '1.0'
 
 # Plugin version
-ALEXOV_VERSION = '0.1'
+SAAMBE_VERSION = '0.1'
 
 # Protocol versions 
 SAAMBE_DEFAULT_VERSION = V1_0
