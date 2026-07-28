@@ -4,4 +4,4 @@
 # Find documentation here: https://scipion-em.github.io/docs/release-3.0.0/docs/developer/tutorials/creating-tests-for-template-calculator.html
 # **************************************************************************
 
-from alexov.tests.test_SAAMBE3D import *
+from saambe.tests.test_SAAMBE3D import *

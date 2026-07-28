@@ -28,8 +28,8 @@
 
 import json
 
-from alexov.protocols import ProtocolSAAMBE3D
-from alexov.constants import *
+from saambe.protocols import ProtocolSAAMBE3D
+from saambe.constants import *
 
 from pwem.wizards import EmWizard
 import pwem.convert as emconv

@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-from alexov import __version__, _logo
+from saambe import __version__, _logo
 
 here = path.abspath(path.dirname(__file__))
 
@@ -26,11 +26,11 @@ with open('requirements.txt') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='scipion-chem-alexov',  # Required
+    name='scipion-chem-saambe',  # Required
     version=__version__,  # Required
     description='Scipion plugin for Alexov group in http://compbio.clemson.edu/lab/',  # Required
     long_description=long_description,  # Optional
-    url='https://github.com/scipion-chem/scipion-chem-alexov',  # Optional
+    url='https://github.com/scipion-chem/scipion-chem-saambe',  # Optional
     author='Natalia del Rey',  # Optional
     author_email='scipion@cnb.csic.es',  # Optional
     keywords='scipion chemoinformatics',  # Optional
@@ -42,12 +42,12 @@ setup(
     packages=find_packages(),
     install_requires=[requirements],
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/scipion-chem/scipion-chem-alexov/issues',
-        'Source': 'https://github.com/scipion-chem/scipion-chem-alexov/',
-        'Pull Requests': 'https://github.com/scipion-chem/scipion-chem-alexov/pulls'
+        'Bug Reports': 'https://github.com/scipion-chem/scipion-chem-saambe/issues',
+        'Source': 'https://github.com/scipion-chem/scipion-chem-saambe/',
+        'Pull Requests': 'https://github.com/scipion-chem/scipion-chem-saambe/pulls'
     },
-    entry_points={'pyworkflow.plugin': 'alexov = alexov'},
+    entry_points={'pyworkflow.plugin': 'saambe = saambe'},
     package_data={  # Optional
-       'alexov': [_logo, 'protocols.conf'],
+       'saambe': [_logo, 'protocols.conf'],
     }
 )

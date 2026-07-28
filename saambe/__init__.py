@@ -35,8 +35,8 @@ from scipion.install.funcs import InstallHelper
 # Plugin imports
 from .constants import *
 
-__version__ = ALEXOV_VERSION  # plugin version
-_logo = "alexov_icon.png"
+__version__ = SAAMBE_VERSION  # plugin version
+_logo = "saambe_icon.png"
 _references = ['Pahari2020']
 
 
@@ -48,7 +48,7 @@ class Plugin(pwem.Plugin):
     Inside that package, for each binary, there will also be another variable.
     _<binaryNameInLowercase>Binary will be a folder inside _<packageNameInLowercase>Home and its name will be <binaryName>.
     """
-    _url = "https://github.com/scipion-chem/scipion-chem-alexov"
+    _url = "https://github.com/scipion-chem/scipion-chem-saambe"
     _supportedVersions = V1_0
 
     saambeDefaultVersion = SAAMBE_DEFAULT_VERSION  
