@@ -103,6 +103,7 @@ class AddMutationsSaambe(EmWizard):
         chainResidues = self.getchainResidues(form)
         ROIOrigin = self.getROIOrigen(form)
         mutations = []
+        seen = set()
 
         if ROIOrigin == 0:
             allRanPos = self.getPositions(form)
@@ -115,7 +116,9 @@ class AddMutationsSaambe(EmWizard):
                             if pos in residues_dict:
                                 aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
                                 mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
-                                mutations.append(mutation)
+                                if mutation not in seen:
+                                    seen.add(mutation)
+                                    mutations.append(mutation)
         else:
             structROI = self.getSructROI(form)
             roiChain = self.getROIChain(form)
@@ -133,16 +136,20 @@ class AddMutationsSaambe(EmWizard):
                             if pos in residues_dict:
                                 aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
                                 mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
-                                mutations.append(mutation)
+                                if mutation not in seen:
+                                    seen.add(mutation)
+                                    mutations.append(mutation)
 
         return mutations
-    
+
     def show(self, form, *params):
         protocol = form.protocol
         mutations = self.getMutations(form)
 
         toMutateList = protocol.toMutateList.get()
-        toMutateList += "\n" + "\n".join(mutations)
+        existing = set(line.strip() for line in toMutateList.strip().split("\n") if line.strip())
+        newMutations = [m for m in mutations if m not in existing]
+        toMutateList += "\n" + "\n".join(newMutations)
         form.setVar('toMutateList', toMutateList.strip())
 
 
