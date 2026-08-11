@@ -26,14 +26,9 @@
 # *
 # **************************************************************************
 
-import json
-
 from saambe.protocols import ProtocolSAAMBE3D
-from saambe.constants import *
 
-from pwem.wizards import EmWizard
-import pwem.convert as emconv
-from pwchem.wizards import SelectChainWizardQT, SelectResidueWizardQT
+from pwchem.wizards import SelectChainWizardQT, SelectResidueWizardQT, AddMutationsWizard, ClearMutationsWizard
 
 SelectChainWizardQT().addTarget(protocol=ProtocolSAAMBE3D,
                               targets=['mutChain'],
@@ -45,116 +40,9 @@ SelectChainWizardQT().addTarget(protocol=ProtocolSAAMBE3D,
                               inputs=['inputAtomStruct'],
                               outputs=['ROIChain'])
 
-class AddMutationsSaambe(EmWizard):
+class AddMutationsSaambe(AddMutationsWizard):
     _targets = [(ProtocolSAAMBE3D, ['addMutation'])]
-    
-    def getPositions(self, form):
-        protocol = form.protocol
-        allRanPos = protocol.RangPositions.get().split(", ")
-        return allRanPos
-
-    def getaaTo(self, form):
-        protocol = form.protocol
-        return "X" if protocol.mutSaturation else str(protocol.mutResidue.get())
-
-    def getchainResidues(self, form):
-        protocol = form.protocol
-        structureHandler = emconv.AtomicStructHandler()
-        structureHandler.read(protocol.inputAtomStruct.get().getFileName())
-        structureHandler.getStructure()
-        modelsLength, modelsFirstResidue = structureHandler.getModelsChains()
-        chainResidues = {}
-
-        for modelID, chains in modelsFirstResidue.items():
-            for chainID, residues in chains.items():
-                if chainID not in chainResidues:
-                    chainResidues[chainID] = {}
-                for residue in residues:
-                    res_id = residue[0]
-                    res_type = residue[1]
-                    chainResidues[chainID][res_id] = res_type
-        
-        return chainResidues
-    
-    def getchain(self, form):
-        protocol = form.protocol
-        chain = json.loads(protocol.mutChain.get())['chain']
-        return chain
-    
-    def getROIOrigen(self, form):
-        protocol = form.protocol
-        ROIOrigin = protocol.ROIOrigin.get()
-        return ROIOrigin
-    
-    def getSructROI(self, form):
-        protocol = form.protocol
-        inputStructROI = protocol.inputStructROI.get()
-        return inputStructROI
-
-    def getROIChain(self, form):
-        protocol = form.protocol
-        chainStr = protocol.ROIChain.get()
-        if chainStr and chainStr.strip():
-            return json.loads(chainStr)['chain']
-        return None
-
-    def getMutations(self, form):
-        aaTo = self.getaaTo(form)
-        chainResidues = self.getchainResidues(form)
-        ROIOrigin = self.getROIOrigen(form)
-        mutations = []
-        seen = set()
-
-        if ROIOrigin == 0:
-            allRanPos = self.getPositions(form)
-            chain = self.getchain(form)
-            for ranPos in allRanPos:
-                ran = ranPos.split("-")
-                for chain, residues_dict in chainResidues.items():
-                    if chain == self.getchain(form):
-                        for pos in range(int(ran[0]), int(ran[1]) + 1):
-                            if pos in residues_dict:
-                                aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
-                                mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
-                                if mutation not in seen:
-                                    seen.add(mutation)
-                                    mutations.append(mutation)
-        else:
-            structROI = self.getSructROI(form)
-            roiChain = self.getROIChain(form)
-            allRanPos = []
-            for item in structROI:
-                chain_res = item.getDecodedCResidues()
-                for roi in chain_res:
-                    res = roi.split("_")
-                    chain = res[0]
-                    pos = int(res[1])
-                    if roiChain and chain != roiChain:
-                        continue
-                    for ch, residues_dict in chainResidues.items():
-                        if ch == chain:
-                            if pos in residues_dict:
-                                aaFrom = AA_THREE_TO_ONE[residues_dict[pos]]
-                                mutation = '{}{}{}{}'.format(aaFrom, chain, pos, aaTo)
-                                if mutation not in seen:
-                                    seen.add(mutation)
-                                    mutations.append(mutation)
-
-        return mutations
-
-    def show(self, form, *params):
-        protocol = form.protocol
-        mutations = self.getMutations(form)
-
-        toMutateList = protocol.toMutateList.get()
-        existing = {line.strip() for line in toMutateList.strip().split("\n") if line.strip()}
-        newMutations = [m for m in mutations if m not in existing]
-        toMutateList += "\n" + "\n".join(newMutations)
-        form.setVar('toMutateList', toMutateList.strip())
 
 
-class ClearMutationsSaambe(EmWizard):
+class ClearMutationsSaambe(ClearMutationsWizard):
   _targets = [(ProtocolSAAMBE3D, ['clearLabel'])]
-
-  def show(self, form, *params):
-    form.setVar('toMutateList', '')

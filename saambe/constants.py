@@ -24,13 +24,7 @@
 # *
 # **************************************************************************
 
-AA_THREE_TO_ONE = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F', 
-                   'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L', 
-                   'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 
-                   'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y',
-                   'ALL': 'X', 'CYX': 'C', 'HID': 'H', 'HIE': 'H', 'MSE': 'M',
-                   'ASH': 'D', 'GLH': 'E', 'LYN': 'K', 'PTR': 'Y', 'HZP': 'P', 
-                   'HYP': 'h'}
+from pwchem.wizards.wizard_add_mutations import AA_THREE_TO_ONE
 
 # ------------------------------------ INSTALLATION VARIABLES ------------------------------------
 PLUGIN_NAME = 'SAAMBE'
